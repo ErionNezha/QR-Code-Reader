@@ -1,0 +1,364 @@
+<!-- Created by Erion Nezha — © 2026 All rights reserved -->
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lexues QR — Erion Nezha</title>
+<meta name="description" content="Skano kode QR me kamerë ose ngarko një foto — dekodimi bëhet 100% në shfletuesin tënd.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<style id="appcss">
+/* ============ ERION NEZHA · ULTRA-PREMIUM THEME (shared) ============ */
+:root{
+  --bg0:#070b16; --bg1:#0b1124; --gold:#D4AF37; --gold2:#f3dd8f;
+  --ink:#eef1f7; --mut:#9aa3b8; --glass:rgba(255,255,255,.055);
+  --line:rgba(212,175,55,.22); --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  background:var(--bg0); color:var(--ink); min-height:100vh; overflow-x:hidden;
+}
+.bg-orbs{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.bg-orbs span{position:absolute;border-radius:50%;filter:blur(90px);opacity:.28;animation:drift 14s ease-in-out infinite alternate}
+.bg-orbs span:nth-child(1){width:520px;height:520px;left:-140px;top:-120px;background:radial-gradient(circle,#D4AF37,transparent 65%)}
+.bg-orbs span:nth-child(2){width:620px;height:620px;right:-180px;top:30%;background:radial-gradient(circle,#2b3f8f,transparent 65%);animation-delay:-5s}
+.bg-orbs span:nth-child(3){width:460px;height:460px;left:20%;bottom:-160px;background:radial-gradient(circle,#6b4fa1,transparent 65%);animation-delay:-9s}
+@keyframes drift{to{transform:translate(60px,40px) scale(1.12)}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+.site-header{padding:64px 0 30px;text-align:center}
+.overline{letter-spacing:.42em;font-size:11px;color:var(--gold);text-transform:uppercase;margin-bottom:14px}
+.site-header h1{font-size:clamp(30px,5vw,52px);font-weight:800;line-height:1.15;
+  background:linear-gradient(120deg,#fff 20%,var(--gold2) 55%,var(--gold) 80%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.site-header p{color:var(--mut);max-width:640px;margin:14px auto 0;font-size:16px;line-height:1.65}
+.live-badge{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:8px 18px;border-radius:999px;
+  border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(10px);font-size:13px;color:var(--gold2);letter-spacing:.08em}
+.live-badge i{width:9px;height:9px;border-radius:50%;background:#3ddc84;box-shadow:0 0 12px #3ddc84;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.demo-wrap{margin:26px 0 54px}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:var(--r);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:0 24px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);padding:30px}
+.code-section{margin:0 0 60px}
+.code-section h2{font-size:24px;margin-bottom:6px}
+.code-section .sub{color:var(--mut);font-size:14px;margin-bottom:18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:0;align-items:center}
+.ctab{padding:10px 22px;border-radius:12px 12px 0 0;border:1px solid var(--line);border-bottom:none;cursor:pointer;
+  background:rgba(255,255,255,.03);color:var(--mut);font-size:14px;font-weight:600;letter-spacing:.04em;transition:.25s}
+.ctab.active{background:linear-gradient(180deg,rgba(212,175,55,.22),rgba(212,175,55,.06));color:var(--gold2)}
+.ctab:hover{color:var(--ink)}
+#copyBtn{margin-left:auto;padding:9px 20px;border-radius:10px;border:1px solid var(--line);cursor:pointer;
+  background:linear-gradient(120deg,var(--gold),#a8842a);color:#0a0e1a;font-weight:700;font-size:13px;transition:.25s}
+#copyBtn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(212,175,55,.35)}
+.codebox{border:1px solid var(--line);border-radius:0 14px 14px 14px;overflow:hidden;background:#0d1326}
+.codebox pre{margin:0;max-height:560px;overflow:auto}
+.codebox pre code{display:block;padding:22px;font-family:"Cascadia Code","Fira Code",Consolas,monospace;font-size:13.5px;line-height:1.7;background:transparent}
+.codebox pre::-webkit-scrollbar{width:10px;height:10px}
+.codebox pre::-webkit-scrollbar-thumb{background:rgba(212,175,55,.35);border-radius:8px}
+footer{text-align:center;padding:34px 20px 44px;color:var(--mut);font-size:14px;border-top:1px solid rgba(212,175,55,.14)}
+footer strong{color:var(--gold2)}
+/* ============ APP CSS (per projekt) ============ */
+/* ============ QR READER CSS ============ */
+.qr-demo{text-align:center}
+.hidden{display:none!important}
+.qr-tabs{display:flex;gap:10px;justify-content:center;margin:6px 0 22px}
+.qr-tab{padding:12px 26px;border-radius:999px;border:1px solid var(--line);cursor:pointer;
+  background:rgba(255,255,255,.04);color:var(--mut);font-size:15px;font-weight:700;transition:.25s}
+.qr-tab.active{background:linear-gradient(120deg,var(--gold2),var(--gold) 60%,#a8842a);
+  color:#0a0e1a;border-color:transparent;box-shadow:0 8px 22px rgba(212,175,55,.35)}
+.qr-stage{position:relative;display:inline-block;max-width:480px;width:100%;
+  border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#000;margin:0 auto}
+#qrVideo,#qrCanvas{width:100%;display:block}
+#qrCanvas{position:absolute;inset:0}
+.qr-frame{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s}
+.qr-frame.found{opacity:1}
+.qr-frame::before{content:"";position:absolute;inset:18%;border:3px solid #3ddc84;border-radius:14px;
+  box-shadow:0 0 24px rgba(61,220,132,.7),inset 0 0 24px rgba(61,220,132,.25)}
+.qr-status{color:var(--mut);font-size:13.5px;margin:14px 0;min-height:20px}
+.qr-controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:6px 0 10px}
+.qr-drop{display:block;max-width:480px;margin:0 auto 18px;padding:36px 20px;border:2px dashed var(--line);
+  border-radius:16px;cursor:pointer;transition:.25s;background:rgba(255,255,255,.02)}
+.qr-drop:hover{border-color:var(--gold);background:rgba(212,175,55,.06)}
+.qr-drop-icon{font-size:38px;display:block;margin-bottom:10px}
+.qr-drop-text{color:var(--mut);font-size:14px}
+.qr-result{margin-top:22px;background:rgba(61,220,132,.06);border:1px solid rgba(61,220,132,.35);
+  border-radius:16px;padding:22px;max-width:640px;margin-left:auto;margin-right:auto}
+.qr-result h3{color:#3ddc84;margin-bottom:10px}
+.qr-text{word-break:break-all;font-size:14.5px;background:rgba(0,0,0,.3);border-radius:10px;
+  padding:14px;margin-bottom:16px;color:var(--ink)}
+.qr-link{text-decoration:none;display:inline-block}
+
+@media(max-width:640px){.glass{padding:20px}.site-header{padding:44px 0 22px}}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><span></span><span></span><span></span></div>
+
+<header class="site-header wrap">
+  <div class="overline">Erion Nezha · Web Projects</div>
+  <h1>Lexues QR</h1>
+  <p>Skano kode QR me kamerë ose ngarko një foto — dekodimi bëhet 100% në shfletuesin tënd.</p>
+  <div class="live-badge"><i></i> LIVE DEMO</div>
+</header>
+
+<main class="wrap">
+  <section class="demo-wrap">
+    <div class="glass" id="demo">
+<!-- ===== QR READER DEMO ===== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
+<div class="qr-demo">
+  <p class="demo-tag">DEMO · dekodimi bëhet 100% në shfletuesin tënd</p>
+  <div class="qr-tabs">
+    <button class="qr-tab active" data-tab="cam">📷 Kamera</button>
+    <button class="qr-tab" data-tab="file">🖼️ Ngarko foto</button>
+  </div>
+
+  <div class="qr-pane" id="paneCam">
+    <div class="qr-stage">
+      <video id="qrVideo" playsinline muted></video>
+      <canvas id="qrCanvas"></canvas>
+      <div class="qr-frame" id="qrFrame"></div>
+    </div>
+    <p class="qr-status" id="qrStatus">Shtyp “Fillo skanimin” për të përdorur kamerën.</p>
+    <div class="qr-controls">
+      <button class="sw-btn sw-primary" id="btnCamStart">▶ Fillo skanimin</button>
+      <button class="sw-btn sw-ghost" id="btnCamStop" disabled>⏹ Ndalo</button>
+    </div>
+  </div>
+
+  <div class="qr-pane hidden" id="paneFile">
+    <label class="qr-drop" id="qrDrop">
+      <input type="file" id="qrFile" accept="image/*" hidden>
+      <span class="qr-drop-icon">🖼️</span>
+      <span class="qr-drop-text">Zgjidh një foto me kod QR ose tërhiqe këtu</span>
+    </label>
+    <div class="qr-stage"><canvas id="qrFileCanvas"></canvas></div>
+    <p class="qr-status" id="qrFileStatus">Ende s'ke zgjedhur foto.</p>
+  </div>
+
+  <div class="qr-result hidden" id="qrResult">
+    <h3>✅ Rezultati</h3>
+    <p class="qr-text" id="qrText"></p>
+    <div class="qr-controls">
+      <button class="sw-btn sw-primary" id="btnCopyQr">📋 Kopjo</button>
+      <a class="sw-btn sw-ghost qr-link hidden" id="btnOpenQr" target="_blank" rel="noopener">🔗 Hap linkun</a>
+    </div>
+  </div>
+
+  <div class="glass-inner">
+    <h3>📜 Historiku i skanimeve</h3>
+    <div id="qrHistList" class="sw-hist-list"></div>
+    <button class="sw-btn sw-danger" id="btnClearQrHist">🗑 Pastro</button>
+  </div>
+</div>
+
+    </div>
+  </section>
+
+  <section class="code-section">
+    <h2>💻 Kodi Burim</h2>
+    <p class="sub">I gjithë kodi i këtij projekti — i lexueshëm, i kopjueshëm, gati për t'u mësuar.</p>
+    <div class="tabs">
+      <button class="ctab active" data-tab="html">HTML</button>
+      <button class="ctab" data-tab="css">CSS</button>
+      <button class="ctab" data-tab="js">JavaScript</button>
+      <button id="copyBtn">Kopjo kodin</button>
+    </div>
+    <div class="codebox"><pre><code id="codeView" class="language-html"></code></pre></div>
+  </section>
+</main>
+
+<footer>Krijuar nga <strong>Erion Nezha</strong> · © 2026 — Të gjitha të drejtat e rezervuara</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script id="appjs">
+/* ============ QR READER APP JS ============ */
+(function(){
+  "use strict";
+  var LS_HIST="qr40_history_v1";
+  var el=function(id){return document.getElementById(id);};
+  var tabs=document.querySelectorAll(".qr-tab");
+  var paneCam=el("paneCam"),paneFile=el("paneFile");
+  var video=el("qrVideo"),canvas=el("qrCanvas"),frame=el("qrFrame"),status=el("qrStatus");
+  var bStart=el("btnCamStart"),bStop=el("btnCamStop");
+  var result=el("qrResult"),rText=el("qrText"),bCopy=el("btnCopyQr"),bOpen=el("btnOpenQr");
+  var fileInput=el("qrFile"),fileCanvas=el("qrFileCanvas"),fileStatus=el("qrFileStatus");
+  var histList=el("qrHistList"),bClear=el("btnClearQrHist");
+
+  var stream=null,scanning=false,lastText=null;
+
+  function hasJsQR(){return typeof window.jsQR==="function";}
+  if(!hasJsQR()){
+    status.textContent="⚠ Libraria e dekodimit (jsQR) s'u ngarkua. Kontrollo lidhjen me internetin.";
+  }
+
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].addEventListener("click",function(){
+      for(var j=0;j<tabs.length;j++)tabs[j].classList.remove("active");
+      this.classList.add("active");
+      var t=this.getAttribute("data-tab");
+      paneCam.classList.toggle("hidden",t!=="cam");
+      paneFile.classList.toggle("hidden",t!=="file");
+      if(t!=="cam")stopCamera();
+    });
+  }
+
+  function load(){try{var v=localStorage.getItem(LS_HIST);return v?JSON.parse(v):[];}catch(e){return[];}}
+  function save(v){try{localStorage.setItem(LS_HIST,JSON.stringify(v));}catch(e){}}
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+  function renderHist(){
+    var h=load();
+    if(!h.length){histList.innerHTML='<div class="sw-hist-empty">Ende asnjë skanim.</div>';return;}
+    var html="";
+    for(var i=h.length-1;i>=0;i--){
+      var txt=h[i].text.length>60?h[i].text.slice(0,60)+"…":h[i].text;
+      html+='<div class="sw-hist-item"><span class="d">'+esc(txt)+'</span><span class="n">'+h[i].date+'</span></div>';
+    }
+    histList.innerHTML=html;
+  }
+  function addHist(text){
+    var h=load();
+    var d=new Date();
+    function p(n){return (n<10?"0":"")+n;}
+    h.push({text:text,date:p(d.getDate())+"/"+p(d.getMonth()+1)+"/"+d.getFullYear()+" "+p(d.getHours())+":"+p(d.getMinutes())});
+    if(h.length>30)h=h.slice(h.length-30);
+    save(h);renderHist();
+  }
+
+  function showResult(text){
+    lastText=text;
+    result.classList.remove("hidden");
+    rText.textContent=text;
+    var isLink=/^https?:\/\//i.test(text.trim());
+    bOpen.classList.toggle("hidden",!isLink);
+    if(isLink)bOpen.href=text.trim();
+    addHist(text);
+  }
+
+  function stopCamera(){
+    scanning=false;
+    if(stream){stream.getTracks().forEach(function(tr){tr.stop();});stream=null;}
+    video.pause();
+    bStart.disabled=false;bStop.disabled=true;
+  }
+
+  function scanLoop(){
+    if(!scanning)return;
+    if(video.readyState===video.HAVE_ENOUGH_DATA&&hasJsQR()){
+      canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+      var ctx=canvas.getContext("2d");
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);
+      var img=ctx.getImageData(0,0,canvas.width,canvas.height);
+      var code=jsQR(img.data,img.width,img.height,{inversionAttempts:"attemptBoth"});
+      if(code&&code.data){
+        frame.classList.add("found");
+        status.textContent="✅ Kodi u gjet!";
+        stopCamera();
+        showResult(code.data);
+        return;
+      }else{
+        frame.classList.remove("found");
+      }
+    }
+    requestAnimationFrame(scanLoop);
+  }
+
+  bStart.addEventListener("click",function(){
+    if(!hasJsQR()){status.textContent="⚠ S'ka librari dekodimi — kontrollo internetin.";return;}
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      status.textContent="😕 Shfletuesi yt s'e mbështet kamerën. Provo tabin “Ngarko foto”.";
+      return;
+    }
+    status.textContent="⏳ Po kërkohet leja e kamerës…";
+    navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}})
+      .then(function(s){
+        stream=s;video.srcObject=s;video.play();
+        scanning=true;bStart.disabled=true;bStop.disabled=false;
+        frame.classList.remove("found");
+        status.textContent="🔍 Po skanoj… drejtoje kamerën nga kodi QR.";
+        requestAnimationFrame(scanLoop);
+      })
+      .catch(function(err){
+        var msg="😕 Kamera s'u hap dot.";
+        if(err&&err.name==="NotAllowedError")msg="😕 Leja e kamerës u refuzua. Lejoje në cilësimet e shfletuesit ose përdor tabin “Ngarko foto”.";
+        else if(err&&err.name==="NotFoundError")msg="😕 S'u gjet asnjë kamerë në pajisje. Provo tabin “Ngarko foto”.";
+        status.textContent=msg;
+      });
+  });
+  bStop.addEventListener("click",function(){
+    stopCamera();
+    status.textContent="Skanimi u ndalua.";
+  });
+
+  fileInput.addEventListener("change",function(){
+    var f=fileInput.files[0];
+    if(!f)return;
+    if(!hasJsQR()){fileStatus.textContent="⚠ S'ka librari dekodimi — kontrollo internetin.";return;}
+    fileStatus.textContent="⏳ Po lexohet fotoja…";
+    var img=new Image();
+    img.onload=function(){
+      var max=800,scale=Math.min(1,max/Math.max(img.width,img.height));
+      fileCanvas.width=Math.round(img.width*scale);
+      fileCanvas.height=Math.round(img.height*scale);
+      var ctx=fileCanvas.getContext("2d");
+      ctx.drawImage(img,0,0,fileCanvas.width,fileCanvas.height);
+      var imgd=ctx.getImageData(0,0,fileCanvas.width,fileCanvas.height);
+      var code=jsQR(imgd.data,imgd.width,imgd.height,{inversionAttempts:"attemptBoth"});
+      if(code&&code.data){
+        fileStatus.textContent="✅ Kodi u lexua me sukses!";
+        showResult(code.data);
+      }else{
+        fileStatus.textContent="😕 S'u gjet asnjë kod QR në këtë foto.";
+      }
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror=function(){fileStatus.textContent="😕 Fotoja s'u lexua dot.";};
+    img.src=URL.createObjectURL(f);
+  });
+
+  bCopy.addEventListener("click",function(){
+    var b=this,txt=lastText||"";
+    function done(t){b.textContent=t;setTimeout(function(){b.textContent="📋 Kopjo";},1500);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){done("U kopjua ✓");},function(){done("Dështoi");});
+    }else{done("Dështoi");}
+  });
+  bClear.addEventListener("click",function(){
+    if(confirm("Të pastrohet historiku i skanimeve?")){save([]);renderHist();}
+  });
+
+  renderHist();
+})();
+
+</script>
+<script>
+(function(){
+  var tabs={
+    html:{lang:"html",get:function(){return document.getElementById("demo").innerHTML.trim();}},
+    css:{lang:"css",get:function(){return document.getElementById("appcss").textContent.trim();}},
+    js:{lang:"javascript",get:function(){return document.getElementById("appjs").textContent.trim();}}
+  };
+  var view=document.getElementById("codeView"),cur="html";
+  function render(){
+    view.textContent=tabs[cur].get();
+    view.className="language-"+tabs[cur].lang;
+    if(window.hljs){delete view.dataset.highlighted;hljs.highlightElement(view);}
+    var bs=document.querySelectorAll(".ctab");
+    for(var i=0;i<bs.length;i++)bs[i].classList.toggle("active",bs[i].dataset.tab===cur);
+  }
+  var bs=document.querySelectorAll(".ctab");
+  for(var i=0;i<bs.length;i++)bs[i].addEventListener("click",function(){cur=this.dataset.tab;render();});
+  document.getElementById("copyBtn").addEventListener("click",function(){
+    var b=this,code=tabs[cur].get();
+    function done(t){b.textContent=t;setTimeout(function(){b.textContent="Kopjo kodin";},1600);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(code).then(function(){done("U kopjua ✓");},function(){done("Dështoi");});}
+    else{var ta=document.createElement("textarea");ta.value=code;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done("U kopjua ✓");}catch(e){done("Dështoi");}document.body.removeChild(ta);}
+  });
+  render();
+})();
+</script>
+</body>
+</html>
